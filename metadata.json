@@ -1,0 +1,6 @@
+{
+  "name": "Chronos Priority Todo",
+  "description": "Customizable priority-scored task manager with dynamic scheduling, 24h timeline calendar, and Basecamp-style triage workflow for Mac and iPhone.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
