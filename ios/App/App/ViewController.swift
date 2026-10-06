@@ -2,9 +2,8 @@ import UIKit
 import Capacitor
 
 class ViewController: CAPBridgeViewController {
-    override func capacitorDidLoad() {
+    override open func capacitorDidLoad() {
         super.capacitorDidLoad()
-        print("🟢 [Geodesic] capacitorDidLoad: Registering WidgetSyncPlugin!")
         bridge?.registerPluginInstance(WidgetSyncPlugin())
     }
 }

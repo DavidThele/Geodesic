@@ -11,7 +11,7 @@ public class WidgetSyncPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "reloadTimelines", returnType: CAPPluginReturnPromise)
     ]
     
-    private let appGroupId = "group.com.davidthele.geodesic" // Replace A1B2C3D4E5 with your actual Team ID
+    private let appGroupId = "group.com.davidthele.geodesic"
     private let storageKey = "geodesic_widget_data"
 
     @objc func syncWidgetData(_ call: CAPPluginCall) {
@@ -22,16 +22,16 @@ public class WidgetSyncPlugin: CAPPlugin, CAPBridgedPlugin {
 
         print("🟢 [Geodesic WidgetSync] Received widget data (\(jsonString.count) bytes)")
 
-        // 1. Write to App Group UserDefaults
+        // 1. App Group UserDefaults
         if let defaults = UserDefaults(suiteName: appGroupId) {
             defaults.set(jsonString, forKey: storageKey)
             defaults.synchronize()
-            print("🟢 [Geodesic WidgetSync] Successfully saved to App Group UserDefaults!")
+            print("🟢 [Geodesic WidgetSync] Successfully saved to App Group UserDefaults")
         } else {
             print("⚠️ [Geodesic WidgetSync] Could not open UserDefaults for App Group: \(appGroupId)")
         }
 
-        // 2. Also write to App Group container file as backup
+        // 2. App Group shared container file
         if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupId) {
             let fileURL = containerURL.appendingPathComponent("geodesic_widget_tasks.json")
             if let data = jsonString.data(using: .utf8) {
@@ -40,9 +40,9 @@ public class WidgetSyncPlugin: CAPPlugin, CAPBridgedPlugin {
             }
         }
 
-        // 3. Immediately reload all widget timelines
+        // 3. Reload timelines
         WidgetCenter.shared.reloadAllTimelines()
-        print("🟢 [Geodesic WidgetSync] WidgetCenter.shared.reloadAllTimelines() called!")
+        print("🟢 [Geodesic WidgetSync] WidgetCenter.shared.reloadAllTimelines() called")
 
         call.resolve(["success": true])
     }
