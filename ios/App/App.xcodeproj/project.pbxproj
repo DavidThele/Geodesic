@@ -10,8 +10,8 @@
 		2F0328A2306F4A3900C64686 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F0328A1306F4A3900C64686 /* WidgetKit.framework */; };
 		2F0328A4306F4A3900C64686 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F0328A3306F4A3900C64686 /* SwiftUI.framework */; };
 		2F0328B3306F4A3B00C64686 /* StatusWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 2F03289F306F4A3800C64686 /* StatusWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		2F202015307496810033B4EF /* WidgetSyncPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F202013307496810033B4EF /* WidgetSyncPlugin.m */; };
 		2F202016307496810033B4EF /* WidgetSyncPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F202014307496810033B4EF /* WidgetSyncPlugin.swift */; };
+		2F20201730749FBB0033B4EF /* WidgetSyncPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F202013307496810033B4EF /* WidgetSyncPlugin.m */; };
 		2FAD9763203C412B000D30F8 /* config.xml in Resources */ = {isa = PBXBuildFile; fileRef = 2FAD9762203C412B000D30F8 /* config.xml */; };
 		2FF65BAD3070710600D52D1B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FF65BAC3070710600D52D1B /* ViewController.swift */; };
 		4D22ABE92AF431CB00220026 /* CapApp-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = 4D22ABE82AF431CB00220026 /* CapApp-SPM */; };
@@ -288,9 +288,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				2FF65BAD3070710600D52D1B /* ViewController.swift in Sources */,
+				2F20201730749FBB0033B4EF /* WidgetSyncPlugin.m in Sources */,
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
-				2F202015307496810033B4EF /* WidgetSyncPlugin.m in Sources */,
 				2F202016307496810033B4EF /* WidgetSyncPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
