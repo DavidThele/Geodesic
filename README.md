@@ -8,7 +8,7 @@ Geodesic is an algorithmic, priority-scored task management system built for iPh
 
 Every task receives a real-time priority score measured in hours. Lower scores demand sooner attention; overdue tasks drop into negative values and float directly to the top.
 
-$$\text{Final Score (hours)} = \text{Baseline Hours} - \text{Importance Deduction} + \text{Distance Addition}$$
+$$\text{Final Score (hours)} = \text{Baseline Hours} - \text{Importance Deduction} + \text{Distance Addition} - \text{Quick-Win Duration Boost}$$
 $$\text{Presumed Due Date} = \text{Current Time} + \text{Final Score (hours)}$$
 
 ### Formula Components
@@ -21,6 +21,9 @@ $$\text{Presumed Due Date} = \text{Current Time} + \text{Final Score (hours)}$$
   * Great-circle Haversine distance in miles between user GPS and task location.
   * Buffer offset (`distanceOffset`, default: **0.5 mi**) adds zero penalty.
   * Effective distance is scaled by `distanceScalar` (default: **1.5h/mi**) and capped at `distanceCapHours` (default: **72h**, further bounded by remaining baseline hours for hard deadlines).
+* **Quick-Win Duration Boost (`estimatedMinutes`):**
+  * Shorter tasks (&le; 10m) receive a priority deduction (-2.5h for &le; 5m, -1.5h for &le; 10m) to encourage quick wins and reduce task paralysis.
+  * Longer tasks (> 10m) receive 0 duration deduction and rely strictly on their explicitly set importance flags and deadlines. Defaults to 10 minutes.
 
 ---
 
@@ -28,6 +31,7 @@ $$\text{Presumed Due Date} = \text{Current Time} + \text{Final Score (hours)}$$
 
 ### Priority Queue (Main List)
 * **Urgency-Sorted Feed:** Sorted ascending by calculated priority score.
+* **Duration Badges:** Each item displays its estimated duration with a small clock icon (e.g. `🕓 10m`), highlighting quick-win tasks (&le; 10m) in soft green.
 * **Dual Time Badges:** Displays human-formatted target dates (`Today 4:30 PM`) alongside relative countdowns (`in 14h`, `-2.5h overdue`). When a hard deadline exists, it displays alongside the calculated date (e.g. `in 14h (24h max)`).
 * **Color-Coded Status:** Red indicators highlight hard deadlines; yellow indicators indicate dynamic presumed due dates.
 * **Subtask Hierarchy:** Subtasks nest cleanly under parents with expandable chevrons. Only subtasks assigned their own independent due dates surface in the primary queue. Completing a parent task offers one-tap batch autocompletion for remaining subtasks.
@@ -66,9 +70,9 @@ $$\text{Presumed Due Date} = \text{Current Time} + \text{Final Score (hours)}$$
 Geodesic includes a native iOS WidgetKit extension (`StatusWidgetExtension`) synchronized with the app in real time via App Group storage (`group.com.davidthele.geodesic`):
 
 ### Home Screen Widgets
-* **Small (2x2):** Displays active task count badge and top-priority countdown.
-* **Medium (3x2):** Priority queue with top 3 tasks, status dots, relative countdowns, and color-coded deadlines (red for hard deadlines, yellow for calculated dates).
-* **Large (3x3):** Expanded priority queue displaying up to 6 tasks with full live status indicators.
+* **Small (2x2):** Displays active task count badge, top-priority countdown, and duration with clock icon (`🕓 10m`).
+* **Medium (3x2):** Priority queue with top 3 tasks, status dots, relative countdowns, color-coded deadlines (red for hard deadlines, yellow for calculated dates), and estimated duration badge (`🕓 10m`).
+* **Large (3x3):** Expanded priority queue displaying up to 6 tasks with full live status indicators and duration badges (`🕓 10m`).
 
 ### Lock Screen Widgets
 * **Top Focus (1–3):**

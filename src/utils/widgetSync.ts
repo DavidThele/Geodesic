@@ -15,6 +15,7 @@ export interface WidgetTaskItem {
   isHardDueDate: boolean;
   isOverdue: boolean;
   importance: string;
+  estimatedMinutes?: number;
   completed?: boolean;
 }
 
@@ -86,6 +87,7 @@ export function prepareWidgetPayload(
       isHardDueDate,
       isOverdue: Boolean(isOverdue),
       importance: task.importance,
+      estimatedMinutes: task.estimatedMinutes !== undefined ? task.estimatedMinutes : 10,
       completed: task.completed,
     };
   });

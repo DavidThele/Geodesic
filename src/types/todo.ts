@@ -39,6 +39,7 @@ export interface Task {
   location?: TaskLocation;
   dueDate?: string; // ISO string for hard due date & time
   importance: ImportanceLevel;
+  estimatedMinutes?: number; // Estimated time to complete in minutes (defaults to 10)
   completed: boolean;
   completedAt?: string;
   parentId?: string | null; // For subtasks
@@ -56,6 +57,7 @@ export interface CalculatedPriority {
   baselineHours: number;
   importanceDeduction: number;
   distanceAddition: number;
+  durationAdjustment?: number; // Priority boost in hours for quick-win tasks (<= 10 mins)
   distanceMiles: number | null;
   presumedDueDate: string; // ISO string: Now + score hours
   isOverdue: boolean;

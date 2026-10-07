@@ -77,9 +77,22 @@ export function calculateTaskPriority(
     distanceAddition = Math.min(rawAddition, cap);
   }
 
-  // 4. Final Priority Score
+  // 4. Quick-Win Duration Deduction
+  // Shorter tasks (<= 10 mins) receive a slight priority boost (hours deducted from score)
+  // to encourage quick wins and reduce task paralysis.
+  // Longer tasks receive 0 duration deduction, so their priority relies more heavily on
+  // their explicitly set importance/urgency flags and deadlines.
+  let durationAdjustment = 0;
+  const estimatedMinutes = task.estimatedMinutes !== undefined ? task.estimatedMinutes : 10;
+  if (estimatedMinutes <= 5) {
+    durationAdjustment = 2.5; // 2.5h boost for ultra-short quick wins (<= 5m)
+  } else if (estimatedMinutes <= 10) {
+    durationAdjustment = 1.5; // 1.5h boost for quick wins (6-10m)
+  }
+
+  // 5. Final Priority Score
   // Lower score = complete sooner. Overdue tasks become heavily negative.
-  const score = baselineHours - importanceDeduction + distanceAddition;
+  const score = baselineHours - importanceDeduction + distanceAddition - durationAdjustment;
 
   // Presumed due date = now + score hours
   const presumedDateMs = nowMs + score * 3600 * 1000;
@@ -90,6 +103,7 @@ export function calculateTaskPriority(
     baselineHours,
     importanceDeduction,
     distanceAddition,
+    durationAdjustment,
     distanceMiles,
     presumedDueDate,
     isOverdue,

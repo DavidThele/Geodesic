@@ -50,6 +50,7 @@ export const TaskModal: React.FC = () => {
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [importance, setImportance] = useState<ImportanceLevel>('none');
+  const [estimatedMinutes, setEstimatedMinutes] = useState<number>(10);
   const [column, setColumn] = useState<TaskColumn>('todo');
   const [location, setLocation] = useState<TaskLocation | undefined>(undefined);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
@@ -70,6 +71,7 @@ export const TaskModal: React.FC = () => {
       setDescription(task.description || '');
       setDueDate(task.dueDate ? task.dueDate.slice(0, 16) : '');
       setImportance(task.importance);
+      setEstimatedMinutes(task.estimatedMinutes !== undefined ? task.estimatedMinutes : 10);
       setColumn(task.column);
       setLocation(task.location);
       setCustomReminders(task.customReminders || []);
@@ -81,6 +83,7 @@ export const TaskModal: React.FC = () => {
       setDescription('');
       setDueDate('');
       setImportance('none');
+      setEstimatedMinutes(10);
       setColumn('todo');
       setLocation(undefined);
       setNewSubtaskDrafts([]);
@@ -107,6 +110,7 @@ export const TaskModal: React.FC = () => {
           description: description.trim() || undefined,
           dueDate: formattedDueDate,
           importance,
+          estimatedMinutes,
           completed: false,
           column,
           location,
@@ -122,6 +126,7 @@ export const TaskModal: React.FC = () => {
         description: description.trim() || undefined,
         dueDate: formattedDueDate,
         importance,
+        estimatedMinutes,
         column,
         location,
         customReminders,
@@ -293,6 +298,48 @@ export const TaskModal: React.FC = () => {
                     <option value="do_now">Do Now (-{settings.importanceDeductions.do_now}h)</option>
                   </select>
                 </div>
+              </div>
+
+              {/* Estimated Time to Complete */}
+              <div>
+                <label className="block text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-1">
+                  Estimated Time to Complete
+                </label>
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="relative flex items-center">
+                    <input
+                      type="number"
+                      min={1}
+                      max={1440}
+                      value={estimatedMinutes}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value, 10);
+                        setEstimatedMinutes(isNaN(val) ? 0 : Math.max(1, val));
+                      }}
+                      className="w-28 text-base sm:text-sm px-3 py-2 pr-7 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 focus:outline-none focus:ring-1 focus:ring-neutral-400 font-mono"
+                    />
+                    <span className="absolute right-2.5 text-xs text-neutral-400 pointer-events-none">m</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    {[5, 10, 30, 60].map((mins) => (
+                      <button
+                        key={mins}
+                        type="button"
+                        onClick={() => setEstimatedMinutes(mins)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                          estimatedMinutes === mins
+                            ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 font-semibold shadow-xs'
+                            : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:bg-neutral-700'
+                        }`}
+                      >
+                        {mins}m
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <span className="block text-[11px] text-neutral-400 mt-1">
+                  Quick wins (&le;10m) receive a priority boost to prevent task paralysis.
+                </span>
               </div>
 
               {/* Map Location Picker */}
@@ -519,7 +566,7 @@ export const TaskModal: React.FC = () => {
               </div>
 
               {/* Key Attributes Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-3 border-y border-neutral-100 dark:border-neutral-800 text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 py-3 border-y border-neutral-100 dark:border-neutral-800 text-xs">
                 {/* Priority Score Breakdown */}
                 <div>
                   <span className="block text-neutral-400 uppercase tracking-wider text-[10px]">
@@ -568,6 +615,20 @@ export const TaskModal: React.FC = () => {
                   <span className="capitalize font-medium text-neutral-700 dark:text-neutral-300">
                     {task?.importance.replace('_', ' ')} (-
                     {priority?.importanceDeduction || 0}h)
+                  </span>
+                </div>
+
+                {/* Est Duration */}
+                <div>
+                  <span className="block text-neutral-400 uppercase tracking-wider text-[10px]">
+                    Est. Duration
+                  </span>
+                  <span className="font-medium text-neutral-700 dark:text-neutral-300 flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-blue-500" />
+                    {task?.estimatedMinutes !== undefined ? `${task.estimatedMinutes}m` : '10m'}
+                    {(task?.estimatedMinutes ?? 10) <= 10 && (
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">(Quick win)</span>
+                    )}
                   </span>
                 </div>
               </div>

@@ -174,6 +174,21 @@ export const PriorityListView: React.FC = () => {
                             {entry.task.location.name}
                           </span>
                         )}
+
+                        {/* Estimated Duration indicator */}
+                        <span
+                          className={`inline-flex items-center gap-1 text-[11px] font-mono px-1.5 py-0.5 rounded ${
+                            (entry.task.estimatedMinutes ?? 10) <= 10
+                              ? 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40'
+                              : 'text-neutral-500 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800'
+                          }`}
+                          title={`Estimated duration: ${entry.task.estimatedMinutes ?? 10}min${
+                            (entry.task.estimatedMinutes ?? 10) <= 10 ? ' (Quick win priority boost)' : ''
+                          }`}
+                        >
+                          <Clock className="w-3 h-3 opacity-70" />
+                          <span>{entry.task.estimatedMinutes ?? 10}m</span>
+                        </span>
                       </div>
 
                       {/* Quiet metadata description */}

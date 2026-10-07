@@ -95,7 +95,13 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [tasks, setTasks] = useState<Task[]>(() => {
     try {
       const stored = localStorage.getItem(TASKS_STORAGE_KEY) || localStorage.getItem(LEGACY_TASKS_STORAGE_KEY);
-      if (stored) return JSON.parse(stored);
+      if (stored) {
+        const parsed: Task[] = JSON.parse(stored);
+        return parsed.map((t) => ({
+          ...t,
+          estimatedMinutes: t.estimatedMinutes !== undefined ? t.estimatedMinutes : 10,
+        }));
+      }
     } catch {
       // ignore
     }
@@ -339,7 +345,11 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const parsed = JSON.parse(jsonStr);
       if (parsed.tasks && Array.isArray(parsed.tasks)) {
-        setTasks(parsed.tasks);
+        const mapped = parsed.tasks.map((t: Task) => ({
+          ...t,
+          estimatedMinutes: t.estimatedMinutes !== undefined ? t.estimatedMinutes : 10,
+        }));
+        setTasks(mapped);
       }
       if (parsed.settings && typeof parsed.settings === 'object') {
         setSettings((prev) => ({ ...prev, ...parsed.settings }));
@@ -398,7 +408,11 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const parsed = JSON.parse(result.data);
         if (parsed?.tasks && Array.isArray(parsed.tasks)) {
           // If the file on disk has newer changes, update state
-          setTasks(parsed.tasks);
+          const mapped = parsed.tasks.map((t: Task) => ({
+            ...t,
+            estimatedMinutes: t.estimatedMinutes !== undefined ? t.estimatedMinutes : 10,
+          }));
+          setTasks(mapped);
           if (parsed.settings) {
             setSettings((prev) => ({ ...prev, ...parsed.settings }));
           }
@@ -513,6 +527,7 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const newTask: Task = {
         ...data,
         id: newId,
+        estimatedMinutes: data.estimatedMinutes !== undefined ? data.estimatedMinutes : 10,
         progressNotes: [],
         createdAt: nowStr,
         updatedAt: nowStr,
@@ -525,6 +540,7 @@ export const TodoProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           title: subTitle.trim(),
           parentId: newId,
           importance: data.importance,
+          estimatedMinutes: 10,
           completed: false,
           column: data.column,
           progressNotes: [],

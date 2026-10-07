@@ -10,6 +10,7 @@ public struct GeodesicTaskItem: Codable, Identifiable {
     public let isHardDueDate: Bool
     public let isOverdue: Bool
     public let importance: String?
+    public let estimatedMinutes: Int?
 
     public init(
         id: String,
@@ -18,7 +19,8 @@ public struct GeodesicTaskItem: Codable, Identifiable {
         hoursAwayFormatted: String,
         isHardDueDate: Bool,
         isOverdue: Bool,
-        importance: String? = nil
+        importance: String? = nil,
+        estimatedMinutes: Int? = 10
     ) {
         self.id = id
         self.title = title
@@ -27,6 +29,7 @@ public struct GeodesicTaskItem: Codable, Identifiable {
         self.isHardDueDate = isHardDueDate
         self.isOverdue = isOverdue
         self.importance = importance
+        self.estimatedMinutes = estimatedMinutes
     }
 }
 
@@ -111,12 +114,12 @@ public struct GeodesicTimelineProvider: TimelineProvider {
 
     private var fallbackPreviewTasks: [GeodesicTaskItem] {
         [
-            GeodesicTaskItem(id: "1", title: "Launch Project Presentation", dueDateFormatted: "Today 5:00 PM", hoursAwayFormatted: "in 2h", isHardDueDate: true, isOverdue: false),
-            GeodesicTaskItem(id: "2", title: "Finalize Deliverables", dueDateFormatted: "Tomorrow 9:00 AM", hoursAwayFormatted: "in 18h", isHardDueDate: false, isOverdue: false),
-            GeodesicTaskItem(id: "3", title: "Review Sprint Priorities", dueDateFormatted: "Friday 2:00 PM", hoursAwayFormatted: "in 2d", isHardDueDate: false, isOverdue: false),
-            GeodesicTaskItem(id: "4", title: "Send Weekly Update to Team", dueDateFormatted: "Friday 5:00 PM", hoursAwayFormatted: "in 2d", isHardDueDate: false, isOverdue: false),
-            GeodesicTaskItem(id: "5", title: "Schedule Design Sync", dueDateFormatted: "Monday 10:00 AM", hoursAwayFormatted: "in 5d", isHardDueDate: false, isOverdue: false),
-            GeodesicTaskItem(id: "6", title: "Archive Completed Epics", dueDateFormatted: "Next Week", hoursAwayFormatted: "in 6d", isHardDueDate: false, isOverdue: false)
+            GeodesicTaskItem(id: "1", title: "Launch Project Presentation", dueDateFormatted: "Today 5:00 PM", hoursAwayFormatted: "in 2h", isHardDueDate: true, isOverdue: false, estimatedMinutes: 30),
+            GeodesicTaskItem(id: "2", title: "Finalize Deliverables", dueDateFormatted: "Tomorrow 9:00 AM", hoursAwayFormatted: "in 18h", isHardDueDate: false, isOverdue: false, estimatedMinutes: 10),
+            GeodesicTaskItem(id: "3", title: "Review Sprint Priorities", dueDateFormatted: "Friday 2:00 PM", hoursAwayFormatted: "in 2d", isHardDueDate: false, isOverdue: false, estimatedMinutes: 15),
+            GeodesicTaskItem(id: "4", title: "Send Weekly Update to Team", dueDateFormatted: "Friday 5:00 PM", hoursAwayFormatted: "in 2d", isHardDueDate: false, isOverdue: false, estimatedMinutes: 10),
+            GeodesicTaskItem(id: "5", title: "Schedule Design Sync", dueDateFormatted: "Monday 10:00 AM", hoursAwayFormatted: "in 5d", isHardDueDate: false, isOverdue: false, estimatedMinutes: 10),
+            GeodesicTaskItem(id: "6", title: "Archive Completed Epics", dueDateFormatted: "Next Week", hoursAwayFormatted: "in 6d", isHardDueDate: false, isOverdue: false, estimatedMinutes: 5)
         ]
     }
 }
@@ -318,9 +321,19 @@ struct SmallHomeView: View {
                             .foregroundColor(topTask.isHardDueDate ? .red : .yellow)
                     }
 
-                    Text(topTask.hoursAwayFormatted)
-                        .font(.system(size: 9.5, weight: .bold, design: .monospaced))
-                        .foregroundColor(.blue)
+                    HStack(spacing: 5) {
+                        Text(topTask.hoursAwayFormatted)
+                            .font(.system(size: 9.5, weight: .bold, design: .monospaced))
+                            .foregroundColor(.blue)
+
+                        HStack(spacing: 2) {
+                            Image(systemName: "clock")
+                                .font(.system(size: 8))
+                            Text("\(topTask.estimatedMinutes ?? 10)m")
+                                .font(.system(size: 9, weight: .medium, design: .monospaced))
+                        }
+                        .foregroundColor(.white.opacity(0.65))
+                    }
                 }
             } else {
                 VStack(spacing: 3) {
@@ -394,6 +407,14 @@ struct MediumHomeView: View {
 
                         Spacer(minLength: 4)
 
+                        HStack(spacing: 2) {
+                            Image(systemName: "clock")
+                                .font(.system(size: 8))
+                            Text("\(task.estimatedMinutes ?? 10)m")
+                                .font(.system(size: 9.5, weight: .medium, design: .monospaced))
+                        }
+                        .foregroundColor(.white.opacity(0.65))
+
                         Text(task.dueDateFormatted)
                             .font(.system(size: 10, weight: .semibold, design: .rounded))
                             .foregroundColor(task.isHardDueDate ? .red : .yellow)
@@ -461,6 +482,14 @@ struct LargeHomeView: View {
                             .lineLimit(1)
 
                         Spacer(minLength: 6)
+
+                        HStack(spacing: 2.5) {
+                            Image(systemName: "clock")
+                                .font(.system(size: 8.5))
+                            Text("\(task.estimatedMinutes ?? 10)m")
+                                .font(.system(size: 9.5, weight: .medium, design: .monospaced))
+                        }
+                        .foregroundColor(.white.opacity(0.65))
 
                         Text(task.dueDateFormatted)
                             .font(.system(size: 11, weight: .semibold, design: .rounded))

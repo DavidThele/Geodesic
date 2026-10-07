@@ -47,6 +47,7 @@ export const SettingsModal: React.FC = () => {
   const [simDueDateHours, setSimDueDateHours] = useState(72);
   const [simImportance, setSimImportance] = useState<ImportanceLevel>('high');
   const [simDistanceMiles, setSimDistanceMiles] = useState(5.0);
+  const [simEstimatedMinutes, setSimEstimatedMinutes] = useState(10);
 
   if (!isSettingsOpen) return null;
 
@@ -58,7 +59,8 @@ export const SettingsModal: React.FC = () => {
     settings.distanceCapHours,
     simEffDist * settings.distanceScalar
   );
-  const simFinalScore = simBaseline - simImportanceDeduction + simDistAddition;
+  const simDurationDeduction = simEstimatedMinutes <= 5 ? 2.5 : simEstimatedMinutes <= 10 ? 1.5 : 0;
+  const simFinalScore = simBaseline - simImportanceDeduction + simDistAddition - simDurationDeduction;
 
   const handleImportanceDeductionChange = (level: ImportanceLevel, value: number) => {
     updateSettings({
@@ -335,6 +337,45 @@ export const SettingsModal: React.FC = () => {
                     className="w-full"
                   />
                 </div>
+
+                <div>
+                  <div className="flex justify-between mb-1">
+                    <span className="font-medium text-neutral-700 dark:text-neutral-300">
+                      Estimated Task Duration (Minutes)
+                    </span>
+                    <span className="font-mono">{simEstimatedMinutes}m</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="1"
+                      max="120"
+                      step="1"
+                      value={simEstimatedMinutes}
+                      onChange={(e) => setSimEstimatedMinutes(parseInt(e.target.value, 10))}
+                      className="w-full"
+                    />
+                    <div className="flex gap-1 shrink-0">
+                      {[5, 10, 30, 60].map((mins) => (
+                        <button
+                          key={mins}
+                          type="button"
+                          onClick={() => setSimEstimatedMinutes(mins)}
+                          className={`px-2 py-0.5 rounded text-[11px] font-medium ${
+                            simEstimatedMinutes === mins
+                              ? 'bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900 font-semibold'
+                              : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300'
+                          }`}
+                        >
+                          {mins}m
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-neutral-400">
+                    Tasks &le; 10m get a quick-win priority deduction (-2.5h for &le;5m, -1.5h for &le;10m)
+                  </span>
+                </div>
               </div>
 
               {/* Calculated Results Box */}
@@ -350,6 +391,10 @@ export const SettingsModal: React.FC = () => {
                 <div className="flex justify-between text-amber-600 dark:text-amber-400">
                   <span>Distance Addition (({simDistanceMiles.toFixed(1)} - {settings.distanceOffset}) × {settings.distanceScalar}):</span>
                   <span>+{simDistAddition.toFixed(1)}h</span>
+                </div>
+                <div className="flex justify-between text-indigo-600 dark:text-indigo-400">
+                  <span>Quick-Win Duration Deduction:</span>
+                  <span>{simDurationDeduction > 0 ? `-${simDurationDeduction.toFixed(1)}h` : '0.0h (standard weight)'}</span>
                 </div>
                 <div className="pt-2 border-t border-neutral-200 dark:border-neutral-700 flex justify-between font-bold text-sm text-neutral-900 dark:text-neutral-100">
                   <span>Final Calculated Priority Score:</span>
