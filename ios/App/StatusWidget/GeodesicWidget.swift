@@ -167,7 +167,9 @@ public struct LockScreenTopFocusView: View {
                     } else {
                         ForEach(firstThree) { task in
                             Text("• \(task.title)")
-                                .font(.system(size: 12, weight: .medium))
+                                .font(.system(size: 12, weight: task.isHardDueDate ? .bold : .medium))
+                                .foregroundColor(.primary)
+                                .opacity(task.isHardDueDate ? 1.0 : 0.38)
                                 .lineLimit(1)
                         }
                     }
@@ -190,6 +192,9 @@ public struct LockScreenTopFocusView: View {
             case .accessoryInline:
                 if let topTask = entry.tasks.first {
                     Text("⏱ \(topTask.title)")
+                        .font(.system(size: 12, weight: topTask.isHardDueDate ? .bold : .medium))
+                        .foregroundColor(.primary)
+                        .opacity(topTask.isHardDueDate ? 1.0 : 0.38)
                 } else {
                     Text("⏱ All tasks complete 🎉")
                 }
@@ -231,7 +236,9 @@ public struct LockScreenNextQueueView: View {
                     } else {
                         ForEach(nextThree) { task in
                             Text("• \(task.title)")
-                                .font(.system(size: 12, weight: .medium))
+                                .font(.system(size: 12, weight: task.isHardDueDate ? .bold : .medium))
+                                .foregroundColor(.primary)
+                                .opacity(task.isHardDueDate ? 1.0 : 0.38)
                                 .lineLimit(1)
                         }
                     }
